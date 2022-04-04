@@ -46,8 +46,8 @@ module Draft
   """
   macro reuse(pkg)
     quote
-      if Pkg.OFFLINE_MODE
-        if Draft.SILENT
+      if Pkg.OFFLINE_MODE[]
+        if Draft.SILENT[]
           Draft.Suppressor.@suppress Pkg.add($(string(pkg)))
         else
           Pkg.add($(string(pkg)))
