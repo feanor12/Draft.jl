@@ -2,14 +2,16 @@ module Draft
   import Pkg
   import Suppressor
   
-  export save_environment, @reuse, online
+  export save_environment, @reuse, online, remove_persitance, silent, make_persitent
 
   const SILENT = Ref(false)
 
   # this function is executed upon loading the module
   function __init__()
-    Pkg.offline()
-    Pkg.activate(temp=true)
+    if Base.ACTIVE_PROJECT[] != nothing
+      Pkg.offline()
+      Pkg.activate(temp=true)
+    end
   end
 
   """
@@ -23,7 +25,7 @@ module Draft
   Disable offline mode
   Equal to Pkg.offline(false)
   """
-  function online
+  function online()
     Pkg.offline(false)
   end
 
@@ -49,6 +51,7 @@ module Draft
           @suppress Pkg.add($(string(pkg)))
         else
           Pkg.add($(string(pkg)))
+        end
       end
       using $pkg
     end 

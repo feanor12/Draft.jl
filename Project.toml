@@ -3,8 +3,13 @@ uuid = "c10ec1d7-7a74-418e-88e2-88b05af4a988"
 authors = ["Michael Pusterhofer <pusterhofer@student.tugraz.at> and contributors"]
 version = "0.1.0"
 
+[deps]
+Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
+Suppressor = "fd094767-a336-5f1f-9728-57cf17d0bbfb"
+
 [compat]
 julia = "1"
+Suppressor = "0.2.1"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
