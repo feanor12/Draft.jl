@@ -18,7 +18,15 @@ module Draft
   Save the current Project.toml into a target directory
   """
   function save_environment(target) 
-    isdir(target) && cp(Base.active_project(),joinpath(target,"Project.toml"))
+    filepath = joinpath(target,"Project.toml")
+    if !isfile(filepath)
+      if !isdir(target)
+        mkpath(target)
+      end
+      cp(Base.active_project(),filepath)
+    else
+      nothing
+    end
   end
 
   """
