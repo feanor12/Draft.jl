@@ -35,7 +35,7 @@ module Draft
   Pass false as the first argument to undo this
   """
   function silent(b::Bool=true)
-    DRAFT.SILENT[] = b
+    Draft.SILENT[] = b
   end
 
   """
