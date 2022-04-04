@@ -4,7 +4,7 @@ module Draft
   
   export save_environment, @reuse, online, remove_persitance, silent, make_persitent
 
-  const SILENT = Ref(false)
+  const SILENT = Ref(true)
 
   # this function is executed upon loading the module
   function __init__()
