@@ -8,7 +8,7 @@ module Draft
 
   # this function is executed upon loading the module
   function __init__()
-    if Base.ACTIVE_PROJECT[] != nothing
+    if Base.ACTIVE_PROJECT[] == nothing
       Pkg.offline()
       Pkg.activate(temp=true)
     end
