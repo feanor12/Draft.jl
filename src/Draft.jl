@@ -84,7 +84,7 @@ module Draft
   end
 
   function _add_startup_config(file)
-    open(file,'a') do io
+    open(file,"a") do io
       write(io,
             """
             #### draft config
