@@ -69,7 +69,7 @@ module Draft
       mkpath(dirname(startup_file))
       touch(startup_file)
     end
-    _add_startup_config()
+    _add_startup_config(startup_file)
   end
 
   """
@@ -83,8 +83,8 @@ module Draft
     println("\t",startup_file)
   end
 
-  function _add_startup_config()
-    open(startup_file,'a') do io
+  function _add_startup_config(file)
+    open(file,'a') do io
       write(io,
             """
             #### draft config
