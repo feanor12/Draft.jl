@@ -23,7 +23,7 @@ Package for faster prorotyping.
 
 ## First Steps
 
-```
+``` julia
 # enable / load Draft
 using Draft
 # load Unitful (works only if locally available)
