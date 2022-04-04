@@ -44,17 +44,22 @@ module Draft
   When the project is in offline mode the package will be automatically added to the current environment
   If the project is not in offline mode it is equal to using
   """
-  macro reuse(pkg)
-    quote
-      if Pkg.OFFLINE_MODE[]
-        if Draft.SILENT[]
-          Draft.Suppressor.@suppress Pkg.add($(string(pkg)))
-        else
-          Pkg.add($(string(pkg)))
+  macro reuse(pkgs...)
+    expressions = map(pkgs) do pkg
+      quote
+        if Pkg.OFFLINE_MODE[]
+          if Draft.SILENT[]
+            Draft.Suppressor.@suppress Pkg.add($(string(pkg)))
+          else
+            Pkg.add($(string(pkg)))
+          end
         end
-      end
-      using $pkg
-    end 
+        using $pkg
+      end 
+    end
+    quote
+      $(expressions...)
+    end
   end
 
   """
