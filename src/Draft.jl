@@ -78,7 +78,7 @@ module Draft
   """
   function remove_persitance()
     println("WIP")
-    println("Please, manually remove the draft config section from your startup.jl file")
+    println("Please, manually remove the draft config section from your startup.jl file.")
     startup_file = joinpath(Base.DEPOT_PATH[1],"config","startup.jl")
     println("\t",startup_file)
   end
@@ -94,6 +94,7 @@ module Draft
             #### end draft config
             """)
     end
+    nothing
   end
 
 end
