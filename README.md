@@ -1,7 +1,7 @@
 # Draft (WIP)
 
 
-Package for faster prorotyping.
+Package for faster prototyping.
 
 * Enables offline mode when the module is loaded for a faster package adding. This can only reused locally installed packages.
 * Enables a temporary directory when the module is loaded and to project is
