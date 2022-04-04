@@ -48,7 +48,7 @@ module Draft
     quote
       if Pkg.OFFLINE_MODE
         if Draft.SILENT
-          @suppress Pkg.add($(string(pkg)))
+          Draft.Suppressor.@suppress Pkg.add($(string(pkg)))
         else
           Pkg.add($(string(pkg)))
         end
