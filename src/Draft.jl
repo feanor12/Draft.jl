@@ -38,14 +38,15 @@ julia> save_environment("/tmp/my_draft")
 
 """
 function save_environment(target; overwrite = false, switch = true)
+    current_project_dir = dirname(Base.active_project())
     project = joinpath(target, "Project.toml")
     manifest = joinpath(target, "Manifest.toml")
     if !isfile(project) || overwrite
         if !isdir(target)
             mkpath(target)
         end
-        cp(Base.active_project(), project)
-        cp(Base.active_project(), manifest)
+        cp(joinpath(current_project_dir,"Project.toml"), project)
+        cp(joinpath(current_project_dir,"Manifest.toml"), manifest)
         switch && Pkg.activate(target)
     else
         println("$project exists. To overwrite it, use `overwrite=true`")
