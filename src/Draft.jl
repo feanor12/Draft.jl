@@ -20,12 +20,14 @@ end
 
 """
 ```
-save_environment(target::String; overwrite = false, switch = true)
+save_environment(target::String; force = false, switch = true)
 ```
 
 Save the current `Project.toml` and `Manifest.toml` to a target directory, and switch (by default) the environment to the new created environment.
 
 `target` must be a directory path where the `Project.toml` file will be saved.  
+
+If `force` is `true`, previously existing project files will be overwritten.
 
 ## Example
 
@@ -34,23 +36,20 @@ julia> save_environment("/tmp/my_draft")
   Activating project at `/tmp/my_draft`
 
 (my_draft) [offline] pkg>
+
 ```
 
 """
-function save_environment(target; overwrite = false, switch = true)
+function save_environment(target; switch = true, force = false)
     current_project_dir = dirname(Base.active_project())
     project = joinpath(target, "Project.toml")
     manifest = joinpath(target, "Manifest.toml")
-    if !isfile(project) || overwrite
-        if !isdir(target)
-            mkpath(target)
-        end
-        cp(joinpath(current_project_dir, "Project.toml"), project)
-        cp(joinpath(current_project_dir, "Manifest.toml"), manifest)
-        switch && Pkg.activate(target)
-    else
-        println("$project exists. To overwrite it, use `overwrite=true`")
+    if !isdir(target)
+        mkpath(target)
     end
+    cp(joinpath(current_project_dir, "Project.toml"), project, force = force)
+    cp(joinpath(current_project_dir, "Manifest.toml"), manifest, force = force)
+    switch && Pkg.activate(target)
 end
 
 """
