@@ -1,14 +1,19 @@
 module Draft
+
 import Pkg
 import Suppressor
 
-export save_environment, @reuse, online, remove_persitance, silent, make_persitent
+export @reuse
+export online 
+export silent
+export save_environment 
+export remove_persitance, make_persitent
 
 const SILENT = Ref(true)
 
 # this function is executed upon loading the module
 function __init__()
-    if Base.ACTIVE_PROJECT[] == nothing
+    if isonothing(Base.ACTIVE_PROJECT[])
         Pkg.offline()
         Pkg.activate(temp = true)
     end
@@ -17,15 +22,15 @@ end
 """
 Save the current Project.toml into a target directory
 """
-function save_environment(target)
+function save_environment(target; overwrite=false)
     filepath = joinpath(target, "Project.toml")
-    if !isfile(filepath)
+    if !isfile(filepath) || overwrite
         if !isdir(target)
             mkpath(target)
         end
         cp(Base.active_project(), filepath)
     else
-        nothing
+        println("$filepath exists. To overwrite it, use `overwrite=true`")
     end
 end
 
