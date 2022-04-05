@@ -13,7 +13,7 @@ const SILENT = Ref(true)
 
 # this function is executed upon loading the module
 function __init__()
-    if isonothing(Base.ACTIVE_PROJECT[])
+    if isnothing(Base.ACTIVE_PROJECT[])
         Pkg.offline()
         Pkg.activate(temp = true)
     end
