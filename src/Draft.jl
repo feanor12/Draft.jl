@@ -126,46 +126,4 @@ macro reuse(pkgs...)
     end
 end
 
-"""
-Adds a startup.jl in .julia/config and loads the Draft module
-This enables draft mode by default.
-To disable this setting please remove the added draft config section.
-This might get automated with `Draft.remove_persistence()`
-"""
-function make_persistent()
-    startup_file = joinpath(Base.DEPOT_PATH[1], "config", "startup.jl")
-    if !isfile(startup_file)
-        mkpath(dirname(startup_file))
-        touch(startup_file)
-    end
-    _add_startup_config(startup_file)
-end
-
-"""
-Should remove the automatic loading of the Draft module from the startup.jl file
-Current only prints a message and the location of the file.
-"""
-function remove_persistence()
-    println("WIP")
-    println("Please, manually remove the draft config section from your startup.jl file.")
-    startup_file = joinpath(Base.DEPOT_PATH[1], "config", "startup.jl")
-    println("\t", startup_file)
-end
-
-function _add_startup_config(file)
-    open(file, "a") do io
-        write(
-            io,
-            """
-            #### draft config
-            # Config was added by `Draft.make_persistent()`
-            # To deactivate draft mode delete this section-
-            using Draft
-            #### end draft config
-            """,
-        )
-    end
-    nothing
-end
-
 end
