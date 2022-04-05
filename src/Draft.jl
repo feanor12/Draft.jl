@@ -4,7 +4,7 @@ import Pkg
 import Suppressor
 
 export @reuse
-export save_environment 
+export save_environment
 
 const SILENT = Ref(true)
 
@@ -37,7 +37,7 @@ julia> save_environment("/tmp/my_draft")
 ```
 
 """
-function save_environment(target; overwrite=false, switch=true)
+function save_environment(target; overwrite = false, switch = true)
     project = joinpath(target, "Project.toml")
     manifest = joinpath(target, "Manifest.toml")
     if !isfile(project) || overwrite
