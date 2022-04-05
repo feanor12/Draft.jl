@@ -1,113 +1,129 @@
 module Draft
-  import Pkg
-  import Suppressor
-  
-  export save_environment, @reuse, online, remove_persitance, silent, make_persitent
 
-  const SILENT = Ref(true)
+import Pkg
+import Suppressor
 
-  # this function is executed upon loading the module
-  function __init__()
-    if Base.ACTIVE_PROJECT[] == nothing
-      Pkg.offline()
-      Pkg.activate(temp=true)
+export @reuse
+export save_environment
+
+const SILENT = Ref(true)
+
+#
+# This function is executed upon loading the module, and will activate a new offline temporary environment. 
+#
+function __init__()
+    if isnothing(Base.ACTIVE_PROJECT[])
+        Pkg.offline()
+        Pkg.activate(temp = true)
     end
-  end
+end
 
-  """
-  Save the current Project.toml into a target directory
-  """
-  function save_environment(target) 
-    filepath = joinpath(target,"Project.toml")
-    if !isfile(filepath)
-      if !isdir(target)
+"""
+```
+save_environment(target::String; force = false, switch = true)
+```
+
+Save the current `Project.toml` and `Manifest.toml` to a target directory, and switch (by default) the environment to the new created environment.
+
+`target` must be a directory path where the `Project.toml` file will be saved.  
+
+If `force` is `true`, previously existing project files will be overwritten.
+
+## Example
+
+```julia-repl
+julia> save_environment("/tmp/my_draft")
+  Activating project at `/tmp/my_draft`
+
+(my_draft) [offline] pkg>
+
+```
+
+"""
+function save_environment(target; switch = true, force = false)
+    current_project_dir = dirname(Base.active_project())
+    project = joinpath(target, "Project.toml")
+    manifest = joinpath(target, "Manifest.toml")
+    if !isdir(target)
         mkpath(target)
-      end
-      cp(Base.active_project(),filepath)
-    else
-      nothing
     end
-  end
+    cp(joinpath(current_project_dir, "Project.toml"), project, force = force)
+    cp(joinpath(current_project_dir, "Manifest.toml"), manifest, force = force)
+    switch && Pkg.activate(target)
+end
 
-  """
-  Disable offline mode
-  Equal to Pkg.offline(false)
-  """
-  function online()
+"""
+```
+Draft.online()
+```
+
+Disable offline mode. Equal to Pkg.offline(false)
+
+"""
+function online()
     Pkg.offline(false)
-  end
+end
 
-  """
-  Set the silent mode of Draft
-  This suppresses the output of `Pkg.add` when using `@reuse`
-  Pass false as the first argument to undo this
-  """
-  function silent(b::Bool=true)
+"""
+Set the silent mode of Draft
+This suppresses the output of `Pkg.add` when using `@reuse`
+Pass false as the first argument to undo this
+"""
+function silent(b::Bool = true)
     Draft.SILENT[] = b
-  end
+end
 
-  """
-  Can be used instead of `using`
+"""
 
-  When the project is in offline mode the package will be automatically added to the current environment
-  If the project is not in offline mode it is equal to using
-  """
-  macro reuse(pkgs...)
+```
+@reuse PackageA
+```
+
+```
+@reuse PackageA PackageB
+```
+
+The `@reuse` macro can be used to replace `using`.
+
+When the project is in offline mode the package will be automatically added to the current environment if
+it is available in the local package depot. 
+
+If the project is not in offline mode it is equal to using.
+
+## Example
+
+```julia-repl
+julia> using Draft
+  Activating new project at `/tmp/jl_gk9X9X`
+
+julia> @reuse StaticArrays
+
+julia> rand(SVector{2,Float64})
+2-element SVector{2, Float64} with indices SOneTo(2):
+ 0.24945757907137645
+ 0.8924266071867566
+```
+
+"""
+macro reuse(pkgs...)
+    if eltype(pkgs) != Symbol
+        throw(ArgumentError("Usage: @reuse PackageA PackageB"))
+    end
     expressions = map(pkgs) do pkg
-      quote
-        if Pkg.OFFLINE_MODE[]
-          if Draft.SILENT[]
-            Draft.Suppressor.@suppress Pkg.add($(string(pkg)))
-          else
-            Pkg.add($(string(pkg)))
-          end
+        quote
+            if Pkg.OFFLINE_MODE[]
+                if Draft.SILENT[]
+                    Draft.Suppressor.@suppress Pkg.add($(string(pkg)))
+                else
+                    Pkg.add($(string(pkg)))
+                end
+            end
+            using $pkg
         end
-        using $pkg
-      end 
     end
     quote
-      $(expressions...)
+        $(expressions...)
     end
-  end
-
-  """
-  Adds a startup.jl in .julia/config and loads the Draft module
-  This enables draft mode by default.
-  To disable this setting please remove the added draft config section.
-  This might get automated with `Draft.remove_persitance()`
-  """
-  function make_persitent()
-    startup_file = joinpath(Base.DEPOT_PATH[1],"config","startup.jl")
-    if !isfile(startup_file)
-      mkpath(dirname(startup_file))
-      touch(startup_file)
-    end
-    _add_startup_config(startup_file)
-  end
-
-  """
-  Should remove the automatic loading of the Draft module from the startup.jl file
-  Current only prints a message and the location of the file.
-  """
-  function remove_persitance()
-    println("WIP")
-    println("Please, manually remove the draft config section from your startup.jl file.")
-    startup_file = joinpath(Base.DEPOT_PATH[1],"config","startup.jl")
-    println("\t",startup_file)
-  end
-
-  function _add_startup_config(file)
-    open(file,"a") do io
-      write(io,
-            """
-            #### draft config
-            # Config was added by `Draft.make_persitent()`
-            # To deactivate draft mode delete this section-
-            using Draft
-            #### end draft config
-            """)
-    end
-    nothing
-  end
+end
 
 end
