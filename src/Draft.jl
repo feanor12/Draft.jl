@@ -45,8 +45,8 @@ function save_environment(target; overwrite = false, switch = true)
         if !isdir(target)
             mkpath(target)
         end
-        cp(joinpath(current_project_dir,"Project.toml"), project)
-        cp(joinpath(current_project_dir,"Manifest.toml"), manifest)
+        cp(joinpath(current_project_dir, "Project.toml"), project)
+        cp(joinpath(current_project_dir, "Manifest.toml"), manifest)
         switch && Pkg.activate(target)
     else
         println("$project exists. To overwrite it, use `overwrite=true`")
