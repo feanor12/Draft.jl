@@ -1,28 +1,23 @@
 # Draft (WIP)
 
+Package for faster prototyping without widespread implications for your Julia default installation. 
 
-Package for faster prototyping.
-
-* Enables offline mode when the module is loaded for a faster package adding. This can only reused locally installed packages.
 * Activates a temporary project when the module is loaded.
-* Provides a macro to ĺoad and install a package `@reuse packagename`.
-* Output of `@reuse` can be suppressed by calling `silent()`. Undo with `silent(false)`.
-* Provides a function to switch back to online mode: `online()`.
-* Provides a function to save the temporary Project.toml file to a target
-  location: `save_environment(target_dir)`.
-* Can make an entry to your startup.jl file to automatically load the Draft
-  module: `make_persitant()`. 
-* To undo the startup.jl setting currently only a placeholder function is exported `remove_persistance()`.
+* Enables offline mode when the module is loaded for a faster package adding. Locally installed packages will be reused.
+* Provides a macro to ĺoad and install a package `@reuse PackageA` or `@reuse PackageA PackageB`.
+* Output of `@reuse` can be suppressed by calling `Draft.silent()`. Undo with `Draft.silent(false)`.
+* Provides a function to switch back to online mode: `Draft.online()`.
+* Provides a function to save the temporary Project.toml file to a target location: `save_environment(target_dir)`.
 
 ## Install
 
-```
-] add https://github.com/feanor12/Draft.jl.git
+```julia
+] add https://github.com/feanor12/Draft.jl
 ```
 or
 ```julia
 import Pkg
-Pkg.add(Pkg.PackageSpec(url="https://github.com/feanor12/Draft.jl.git"))
+Pkg.add(url="https://github.com/feanor12/Draft.jl")
 ```
 
 ## First Steps
@@ -30,7 +25,16 @@ Pkg.add(Pkg.PackageSpec(url="https://github.com/feanor12/Draft.jl.git"))
 ``` julia
 # enable / load Draft
 using Draft
-# load Unitful (works only if locally available)
-@reuse Unitful
+# load StaticArrays and Unitful (works only if locally available)
+@reuse StaticArrays Unitful
+# save temporary environment 
+save_environment("./my_project")
 ```
 
+## Persitent usage
+
+If you want this package to be loaded by default, install it in your base environment and add 
+```
+using Draft
+```
+to the `.julia/config/startup.jl` file.
