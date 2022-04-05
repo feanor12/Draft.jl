@@ -34,7 +34,7 @@ save_environment("./my_project")
 ## Persitent usage
 
 If you want this package to be loaded by default, install it in your base environment and add 
-```
+```julia
 using Draft
 ```
 to the `.julia/config/startup.jl` file.
